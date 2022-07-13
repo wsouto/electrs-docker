@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  electrs:
+    image: waltersouto/electrs:${TAG}@sha256:c6a77f422ea0e671c7d5994a6c11bc2adc53d7e08a048eb823e2e1b127fcd12f
+    restart: "no"
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - "${HOST_BTC_DIR}:${DAEMON_DIR}:ro"
+      - "${HOST_DATA_DIR}:/data"
+    environment:
+      ELECTRS_LOG_FILTERS: "INFO"
+      ELECTRS_NETWORK: "bitcoin"
+      ELECTRS_SERVER_BANNER: ${BANNER}
+      ELECTRS_DAEMON_RPC_ADDR: "${BTC_ADDR}:${BTC_RPC_PORT}"
+      ELECTRS_DAEMON_P2P_ADDR: "${BTC_ADDR}:${BTC_P2P_PORT}"
+      ELECTRS_ELECTRUM_RPC_ADDR: "${ADDR}:${PORT}"
+      ELECTRS_DAEMON_DIR: "${DAEMON_DIR}"
+      ELECTRS_DB_DIR: "${DB_DIR}"
