@@ -28,4 +28,4 @@ STOPSIGNAL SIGINT
 
 HEALTHCHECK CMD curl -fSs http://localhost:4224/ || exit 1
 
-ENTRYPOINT [ "electrs" ]
+ENTRYPOINT [ "electrs", "--conf", "/data/config.toml" ]
