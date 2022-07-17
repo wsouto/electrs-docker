@@ -22,3 +22,9 @@ To use the `docker-compose.yml` from this repo you are going to need the `.env` 
 - Run `docker build -t <your-docker-hub-user>/electrs:<tag>` if you intend to push to Docker Hub.
 - Edit the `docker-compose.yml` file to use your image.
 - Run `docker compose up`
+
+**3. Copy the `config.toml` file to the `HOST_DATA_DIR`:**
+
+This file is opcional, you can set any Electrs configuration as you like or need in it.
+
+_**Note**: that this is the only way to authenticate in a remote Bitcoin server too. See `auth` directive._
