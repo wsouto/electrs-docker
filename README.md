@@ -27,4 +27,4 @@ To use the `docker-compose.yml` from this repo you are going to need the `.env` 
 
 This file is opcional, you can set any Electrs configuration as you like or need in it.
 
-_**Note**: that this is the only way to authenticate in a remote Bitcoin server too. See `auth` directive._
+_**Note**: this is the only way to authenticate in a remote Bitcoin server too. See `auth` directive._
