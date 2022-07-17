@@ -5,7 +5,7 @@ services:
     image: waltersouto/electrs:${TAG}@sha256:70e05b63f85babfb83dcc44dbb95f6d829762572975b695160aa3d769a917098
     restart: "no"
     ports:
-      - "${PORT}:${PORT}"
+      - "${HOST_PORT}:50001"
     volumes:
       - "${HOST_DATA_DIR}:/data"
       - "${HOST_BTC_DIR}:${DAEMON_DIR}:ro"
@@ -15,7 +15,6 @@ services:
       ELECTRS_SERVER_BANNER: "${BANNER}"
       ELECTRS_DAEMON_RPC_ADDR: "${BTC_ADDR}:${BTC_RPC_PORT}"
       ELECTRS_DAEMON_P2P_ADDR: "${BTC_ADDR}:${BTC_P2P_PORT}"
-      ELECTRS_ELECTRUM_RPC_ADDR: "${ADDR}:${PORT}"
+      ELECTRS_ELECTRUM_RPC_ADDR: "${HOST_ADDR}:${HOST_PORT}"
       ELECTRS_DAEMON_DIR: "${DAEMON_DIR}"
       ELECTRS_DB_DIR: "${DB_DIR}"
-
