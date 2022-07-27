@@ -18,8 +18,8 @@ To use the `docker-compose.yml` from this repo you are going to need the `.env` 
 **2. If you want to build your image:**
 
 - Download the `Dockerfile` and `docker-compose.yml` if you have not cloned the repo.
-- Run `docker build -t electrs:<tag>` to use locally or,
-- Run `docker build -t <your-docker-hub-user>/electrs:<tag>` if you intend to push to Docker Hub.
+- Run `docker build -t electrs:<tag> .` to use locally or,
+- Run `docker build -t <your-docker-hub-user>/electrs:<tag> .` if you intend to push to Docker Hub.
 - Edit the `docker-compose.yml` file to use your image.
 - Run `docker compose up`
 
