@@ -2,7 +2,7 @@ version: "3"
 
 services:
   electrs:
-    image: waltersouto/electrs:${TAG}@sha256:70e05b63f85babfb83dcc44dbb95f6d829762572975b695160aa3d769a917098
+    image: waltersouto/electrs:${TAG}@sha256:2525f3111421f5e1463379159ca4c135ecad40b1853e7e0c5bc0f00f32e02da9
     restart: "no"
     ports:
       - "${HOST_PORT}:50001"
