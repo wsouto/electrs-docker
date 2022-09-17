@@ -1,9 +1,9 @@
 # Build Electrs from Github Repository
-FROM rust:1.62.0-slim-bullseye AS builder
+FROM rust:1.63.0-slim-bullseye AS builder
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
-ARG VERSION=v0.9.8
+ARG VERSION=v0.9.9
 ENV REPO=https://github.com/romanz/electrs.git
 
 RUN apt-get update
