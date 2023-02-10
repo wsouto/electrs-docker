@@ -1,13 +1,13 @@
 # Build Electrs from Github Repository
-FROM rust:1.65.0-slim-bullseye AS builder
+FROM rust:1-slim-bullseye AS builder
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
-ARG VERSION=v0.9.10
+ARG VERSION=v0.9.11
 ENV REPO=https://github.com/romanz/electrs.git
 
 RUN apt-get update
-RUN apt-get install -y git cargo clang cmake libsnappy-dev
+RUN apt-get install -y git clang cmake libsnappy-dev librocksdb-dev
 
 WORKDIR /build
 
