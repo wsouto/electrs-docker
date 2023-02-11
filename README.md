@@ -1,8 +1,8 @@
 # electrs-docker
 
-## A Dockerfile to build from the source code and a docker-compose.yml to run Electrs
+## A Dockerfile to Build from the Source
 
-_This image is intended to connect to a local Bitcoin node, but you can use the file `config.toml` to authenticate in a remote node, just copy it to `HOST_ELECTRS_DIR` and set the node credentials._
+_This image is intended to connect to a local Bitcoin node, but you can use the file `config.toml` to authenticate in a remote node, just copy it to `HOST_ELECTRS_DIR` (see env.example file) and set the bitcoin node credentials._
 
 **References:**
 

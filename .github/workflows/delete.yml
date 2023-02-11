@@ -1,0 +1,23 @@
+#https://github.com/marketplace/actions/delete-workflow-runs
+
+name: Delete Workflow Runs
+
+on:
+  schedule:
+    # Run weekly, at 00:00 on sundays.
+    - cron: '0 0 * * SUN'
+
+  # Allows you to run this workflow manually from the Actions tab on GitHub.
+  workflow_dispatch:
+
+jobs:
+  del_runs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete workflow Runs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 7
+          keep_minimum_runs: 3
