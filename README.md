@@ -6,8 +6,8 @@ _This image is intended to connect to a local Bitcoin node, but you can use the 
 
 **References:**
 
-* Electrs repo: <https://github.com/romanz/electrs>
-* Docker images: <https://hub.docker.com/r/waltersouto/electrs>
+- Electrs repo: <https://github.com/romanz/electrs>
+- Docker images: <https://hub.docker.com/r/waltersouto/electrs>
 
 ## How to use
 
@@ -18,7 +18,7 @@ In the repository directory, copy the file `env.example` to `.env` and edit it a
 Next, to build the image run:
 
 ```shell
-docker build -t <your-docker-hub-user>/electrs:<tag>
+docker build -t <your-docker-hub-user>/electrs:<tag> .
 ```
 
 Now you can run via a `docker run` command or via a docker-compose file. A compose file is intended when we need some kind of orchestration. To run only one container isolated is better to use the `docker run` command. With compose, you need to push the image to a register because docker-compose is meant to pull images.

@@ -12,7 +12,7 @@ RUN apt install -qy git cargo clang cmake build-essential
 
 WORKDIR /build
 
-ARG VERSION=v0.9.11
+ARG VERSION=v0.9.13
 ENV REPO=https://github.com/romanz/electrs.git
 
 RUN git clone --branch $VERSION $REPO .
