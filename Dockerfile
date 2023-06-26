@@ -1,5 +1,5 @@
 # Build Electrs from Github Repository
-FROM ubuntu:kinetic AS base
+FROM debian:bookworm AS base
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
@@ -12,7 +12,7 @@ RUN apt install -qy git cargo clang cmake build-essential
 
 WORKDIR /build
 
-ARG VERSION=v0.9.13
+ARG VERSION=v0.9.14
 ENV REPO=https://github.com/romanz/electrs.git
 
 RUN git clone --branch $VERSION $REPO .
@@ -26,3 +26,4 @@ EXPOSE 50001
 
 ENTRYPOINT ["electrs"]
 CMD ["--conf", "/data/config.toml"]
+
