@@ -8,9 +8,6 @@ services:
     ports:
       - ${HOST_PORT}:50001
 
-    volumes:
-      - ${HOST_BITCOIN_DIR}:${DAEMON_DIR}:ro
-      - ${HOST_ELECTRS_DIR}:/data
     environment:
       ELECTRS_DB_DIR: ${DB_DIR}
       ELECTRS_DAEMON_DIR: ${DAEMON_DIR}
@@ -20,3 +17,7 @@ services:
       ELECTRS_DAEMON_RPC_ADDR: ${BTC_ADDR}:${BTC_RPC_PORT}
       ELECTRS_DAEMON_P2P_ADDR: ${BTC_ADDR}:${BTC_P2P_PORT}
       ELECTRS_ELECTRUM_RPC_ADDR: ${HOST_ADDR}:${HOST_PORT}
+
+    volumes:
+      - ${BITCOIN_DIR}:${DAEMON_DIR}:ro
+      - ${ELECTRS_DIR}:/data
