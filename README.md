@@ -2,7 +2,7 @@
 
 ## A Dockerfile to Build from the Source
 
-_This image is intended to connect to a local Bitcoin node, but you can use the file `config.toml` to authenticate in a remote node, just copy it to `HOST_ELECTRS_DIR` (see env.example file) and set the bitcoin node credentials._
+_This image is intended to connect to a local Bitcoin node, but you can use the file `config.toml` to authenticate into a remote node. To do this, copy it to `HOST_ELECTRS_DIR` (see env.example file) and set the Bitcoin node credentials._
 
 **References:**
 
@@ -11,19 +11,17 @@ _This image is intended to connect to a local Bitcoin node, but you can use the 
 
 ## How to use
 
-Start by cloning this repository.
+Start cloning this repository. In the repository directory, copy the file `env.example` to `.env` and edit it according to your environment.
 
-In the repository directory, copy the file `env.example` to `.env` and edit it according to your environment.
-
-Next, to build the image run:
+To build the image, run the following command:
 
 ```shell
 docker build -t <your-docker-hub-user>/electrs:<tag> .
 ```
 
-Now you can run via a `docker run` command or via a docker-compose file. A compose file is intended when we need some kind of orchestration. To run only one container isolated is better to use the `docker run` command. With compose, you need to push the image to a register because docker-compose is meant to pull images.
+You can run the container with the `docker run` command or with `docker compose` since a `compose.yml` file is provided.
 
-Here is the run command (don't forget the `.env` file):
+Here is the run command (don't forget to edit the `.env` file):
 
 ```shell
 docker run --rm \
@@ -45,7 +43,7 @@ ${DOCKER_USER}/electrs:${TAG}
 
 There is also a file `run.sh` containing the command.
 
-To push the image to the register so docker-compose can use it:
+To push the image to the registry:
 
 ```shell
 docker push <your-docker-hub-user>/electrs:<tag>
@@ -57,4 +55,4 @@ After the build is done, use the `docker-compose.yml` to run the image:
 docker compose up
 ```
 
-_**Note**: Using the `config.toml` is the only way to authenticate into a remote Bitcoin server. See the `auth` directive._
+_**Note**: The `config.toml` is the only way to authenticate into a remote Bitcoin node. See the `auth` directive._
