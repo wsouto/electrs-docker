@@ -1,6 +1,6 @@
 # Build Electrs from Github Repository
 
-FROM debian:bookworm-slim AS base
+FROM ubuntu:jammy AS base
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
@@ -14,10 +14,9 @@ RUN apt install -qy git cargo clang cmake
 
 WORKDIR /build
 
-ARG VERSION=v0.10.0
-ENV REPO="https://github.com/romanz/electrs.git"
+ARG TAG=v0.10.0
 
-RUN git clone --branch $VERSION $REPO .
+RUN git clone --branch $TAG "https://github.com/romanz/electrs.git" .
 RUN cargo build --release --bin electrs
 
 FROM base as deploy
