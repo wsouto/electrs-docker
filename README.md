@@ -2,7 +2,7 @@
 
 ## A Dockerfile to Build from the Source
 
-_This image is intended to connect to a local Bitcoin node, but you can use the file `config.toml` to authenticate into a remote node. To do this, copy it to `HOST_ELECTRS_DIR` (see env.example file) and set the Bitcoin node credentials._
+_**Note:** This image is intended to connect to a local running Bitcoin node only._
 
 **References:**
 
@@ -54,5 +54,3 @@ After the build is done, use the `docker-compose.yml` to run the image:
 ```shell
 docker compose up
 ```
-
-_**Note**: The `config.toml` is the only way to authenticate into a remote Bitcoin node. See the `auth` directive._
