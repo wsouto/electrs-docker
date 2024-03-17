@@ -1,6 +1,6 @@
 # Build Electrs from Github Repository
 
-FROM ubuntu:noble AS base
+FROM ubuntu:jammy AS base
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
@@ -14,7 +14,7 @@ RUN apt install -qy git cargo clang cmake
 
 WORKDIR /build
 
-ARG TAG=v0.10.3
+ARG TAG=v0.10.4
 
 RUN git clone --branch $TAG "https://github.com/romanz/electrs.git" .
 RUN cargo build --release --bin electrs
