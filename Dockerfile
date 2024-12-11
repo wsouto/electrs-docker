@@ -15,7 +15,7 @@ RUN apt install -qy git cargo clang cmake
 
 WORKDIR /build
 
-ARG TAG=v0.10.6
+ARG TAG=v0.10.7
 
 RUN git clone --branch $TAG "https://github.com/romanz/electrs.git" .
 RUN cargo build --release --bin electrs
