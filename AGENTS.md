@@ -12,22 +12,26 @@ This repository provides Docker infrastructure for running electrs (Electrum Bit
 ## Build Commands
 
 ### Local Build
+
 ```bash
 docker build -t <your-docker-hub-user>/electrs:<tag> .
 ```
 
 ### Using Environment File
+
 ```bash
 # Set DOCKER_USER and TAG in .env first
 docker build -t ${DOCKER_USER}/electrs:${TAG} .
 ```
 
 ### Run Container
+
 ```bash
 docker compose up
 ```
 
 ### Manual Run
+
 ```bash
 docker run --rm \
   --name electrs \
@@ -47,6 +51,7 @@ docker run --rm \
 ```
 
 ### Push to Registry
+
 ```bash
 docker push <your-docker-hub-user>/electrs:<tag>
 ```
@@ -54,13 +59,16 @@ docker push <your-docker-hub-user>/electrs:<tag>
 ## Testing
 
 ### Local Testing
+
 Use `run.sh` for testing with a local Bitcoin node:
+
 ```bash
 # Edit BITCOIN_NODE variable in run.sh first
 ./run.sh
 ```
 
 Test requirements:
+
 - Running Bitcoin node accessible at configured address
 - Valid credentials in `config.toml`
 - Data directory for electrs index storage
@@ -68,6 +76,7 @@ Test requirements:
 ## Configuration
 
 ### Environment Variables (.env)
+
 - `DOCKER_USER`: Docker Hub username
 - `TAG`: Electrs version tag (e.g., v0.11.0)
 - `BANNER`: Server banner string
@@ -82,6 +91,7 @@ Test requirements:
 - `DAEMON_DIR`: Bitcoin data directory inside container
 
 ### Electrs Configuration (config.toml)
+
 - `auth`: Authentication credentials (format: "user:password")
 - `cookie_file`: Bitcoind cookie file path
 - `daemon_rpc_addr`: Bitcoind RPC address
@@ -94,6 +104,7 @@ Test requirements:
 ## Code Style Guidelines
 
 ### Dockerfile
+
 - Multi-stage builds for minimal image size
 - Use `ubuntu:noble` as base image
 - Keep dependencies minimal (`librocksdb-dev`, build tools)
@@ -102,6 +113,7 @@ Test requirements:
 - Use CMD for runtime arguments
 
 ### Shell Scripts
+
 - Shebang: `#!/bin/sh`
 - No complex bashisms (POSIX sh compatibility)
 - Use tabs for indentation
@@ -109,6 +121,7 @@ Test requirements:
 - Include usage instructions
 
 ### Configuration Files
+
 - TOML format for electrs config
 - Inline comments for each setting
 - Example values prefixed with `#`
@@ -123,7 +136,7 @@ Test requirements:
 
 ## File Structure
 
-```
+```text
 .
 ├── compose.yml           # Docker Compose configuration
 ├── Dockerfile            # Multi-stage build
