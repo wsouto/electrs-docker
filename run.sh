@@ -1,23 +1,33 @@
 #!/bin/sh
-
-# This script is intended for test the image.
+#
+# This script is intended for testing the image.
 # You need a bitcoin node to connect to.
-# Just edit the varioble bellow with the address of your node.
-# The crendentials to use can be found in the config.toml file.
-# After the test succeed you can delete the data directory.
+#
+# Create a data directory for electrs and copy the config:
+# mkdir data
+# cp config.toml data/
+#
+# Check the .env and config.toml files for configuration.
+# OBS: in this case all configuration comes from the .env file.
+#
+###
 
-BITCOIN_NODE="bitcoin.local"
+# Load environment variables
+. ./.env
 
+# Run the electrs container
 docker run --rm \
 	--name electrs \
-	-e ELECTRS_DB_DIR="/data/db" \
-	-e ELECTRS_NETWORK="bitcoin" \
-	-e ELECTRS_LOG_FILTERS="INFO" \
-	-e ELECTRS_SERVER_BANNER="<<< ELECTRS TEST IMAGE >>>" \
-	-e ELECTRS_DAEMON_RPC_ADDR="${BITCOIN_NODE}:8332" \
-	-e ELECTRS_DAEMON_P2P_ADDR="${BITCOIN_NODE}:8333" \
-	-e ELECTRS_ELECTRUM_RPC_ADDR="0.0.0.0:50001" \
-	-v ./data:/data \
-	-v ./config.toml:/data/config.toml:ro \
-	-p 50001:50001 \
-	waltersouto/electrs:latest
+	--env-file=.env \
+	--network host \
+	-e ELECTRS_DB_DIR=${DB_DIR} \
+	-e ELECTRS_NETWORK=bitcoin \
+	-e ELECTRS_LOG_FILTERS=DEBUG \
+	-e ELECTRS_SERVER_BANNER="${BANNER}" \
+	-e ELECTRS_DAEMON_RPC_ADDR=${BTC_ADDR}:${BTC_RPC_PORT} \
+	-e ELECTRS_DAEMON_P2P_ADDR=${BTC_ADDR}:${BTC_P2P_PORT} \
+	-e ELECTRS_ELECTRUM_RPC_ADDR=${HOST_ADDR}:${HOST_PORT} \
+  -v ${BITCOIN_DIR}:/root/.bitcoin:ro \
+	-v ${ELECTRS_DIR}:/data \
+	-p ${HOST_PORT}:50001 \
+	${DOCKER_USER}/electrs:${TAG}

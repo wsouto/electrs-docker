@@ -1,3 +1,12 @@
+###
+#
+# This is an example Docker Compose file for running Electrs.
+# It uses environment variables defined in the .env file for configuration.
+#
+# See the run.sh script and .env file for more details.
+#
+###
+
 version: "3"
 
 services:
@@ -5,12 +14,12 @@ services:
     image: ${DOCKER_USER}/electrs:${TAG}
     restart: unless-stopped
 
-    ports:
-      - ${HOST_PORT}:50001
+    network_mode: host
+    
+    # Note that the container will expose the Electrs RPC port (default: 50001)
 
     environment:
       ELECTRS_DB_DIR: ${DB_DIR}
-      ELECTRS_DAEMON_DIR: ${DAEMON_DIR}
       ELECTRS_NETWORK: bitcoin
       ELECTRS_LOG_FILTERS: INFO
       ELECTRS_SERVER_BANNER: ${BANNER}
@@ -19,5 +28,5 @@ services:
       ELECTRS_ELECTRUM_RPC_ADDR: ${HOST_ADDR}:${HOST_PORT}
 
     volumes:
-      - ${BITCOIN_DIR}:${DAEMON_DIR}:ro
+      - ${BITCOIN_DIR}:/root/.bitcoin:ro
       - ${ELECTRS_DIR}:/data
