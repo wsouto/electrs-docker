@@ -8,6 +8,7 @@ ARG VERSION="0.11.0"
 
 RUN apt update -qqy
 RUN apt install -qqy clang cmake libclang-dev librocksdb-dev cargo
+RUN apt clean && rm -rf /var/lib/apt/lists/*
 
 ENV ROCKSDB_INCLUDE_DIR=/usr/include
 ENV ROCKSDB_LIB_DIR=/usr/lib
