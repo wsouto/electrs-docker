@@ -4,27 +4,21 @@ FROM debian:trixie-slim AS base
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
+ARG VERSION="0.11.0"
+
 RUN apt update -qqy
-RUN apt install -qqy librocksdb-dev
-RUN apt clean
+RUN apt install -qqy clang cmake libclang-dev librocksdb-dev cargo
 
-FROM base AS build
+ENV ROCKSDB_INCLUDE_DIR=/usr/include
+ENV ROCKSDB_LIB_DIR=/usr/lib
 
-# RUN apt install -qqy git cargo clang cmake build-essential
-RUN apt install -qqy git cargo clang cmake libclang-dev
+RUN cargo install electrs --version ${VERSION} --locked
 
-WORKDIR /build
-
-ARG TAG="v0.11.0"
-
-RUN git clone --branch ${TAG} "https://github.com/romanz/electrs.git" .
-RUN cargo build --release --bin electrs
 
 FROM base AS deploy
 
-COPY --from=build /build/target/release/electrs /bin/electrs
+COPY --from=base /root/.cargo/bin/electrs /bin/electrs
 
 EXPOSE 50001
 
-# ENTRYPOINT ["electrs"]
 CMD ["electrs", "--conf", "/data/config.toml"]
