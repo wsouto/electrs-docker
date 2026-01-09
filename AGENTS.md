@@ -14,13 +14,6 @@ This repository provides Docker infrastructure for running electrs (Electrum Bit
 ### Local Build
 
 ```bash
-docker build -t <your-docker-hub-user>/electrs:<tag> .
-```
-
-### Using Environment File
-
-```bash
-# Set DOCKER_USER and TAG in .env first
 docker build -t ${DOCKER_USER}/electrs:${TAG} .
 ```
 
@@ -33,27 +26,13 @@ docker compose up
 ### Manual Run
 
 ```bash
-docker run --rm \
-  --name electrs \
-  --env-file=.env \
-  -e ELECTRS_DB_DIR=${DB_DIR} \
-  -e ELECTRS_DAEMON_DIR=${DAEMON_DIR} \
-  -e ELECTRS_NETWORK=bitcoin \
-  -e ELECTRS_LOG_FILTERS=INFO \
-  -e ELECTRS_SERVER_BANNER="${BANNER}" \
-  -e ELECTRS_DAEMON_RPC_ADDR=${BTC_ADDR}:${BTC_RPC_PORT} \
-  -e ELECTRS_DAEMON_P2P_ADDR=${BTC_ADDR}:${BTC_P2P_PORT} \
-  -e ELECTRS_ELECTRUM_RPC_ADDR=${HOST_ADDR}:${HOST_PORT} \
-  -v ${HOST_BITCOIN_DIR}:${DAEMON_DIR}:ro \
-  -v ${HOST_ELECTRS_DIR}:/data \
-  -p ${HOST_PORT}:50001 \
-  ${DOCKER_USER}/electrs:${TAG}
+./run.sh
 ```
 
 ### Push to Registry
 
 ```bash
-docker push <your-docker-hub-user>/electrs:<tag>
+docker push ${DOCKER_USER}/electrs:${TAG}
 ```
 
 ## Testing
@@ -63,7 +42,6 @@ docker push <your-docker-hub-user>/electrs:<tag>
 Use `run.sh` for testing with a local Bitcoin node:
 
 ```bash
-# Edit BITCOIN_NODE variable in run.sh first
 ./run.sh
 ```
 
@@ -73,77 +51,84 @@ Test requirements:
 - Valid credentials in `config.toml`
 - Data directory for electrs index storage
 
-## Configuration
+## Environment Variables
 
-### Environment Variables (.env)
+### Configuration (.env)
 
-- `DOCKER_USER`: Docker Hub username
-- `TAG`: Electrs version tag (e.g., v0.11.0)
-- `BANNER`: Server banner string
-- `BITCOIN_DIR`: Host path to Bitcoin data
-- `ELECTRS_DIR`: Host path for electrs data
-- `BTC_ADDR`: Bitcoin node IP address
-- `BTC_RPC_PORT`: Bitcoin RPC port (default: 8332)
-- `BTC_P2P_PORT`: Bitcoin P2P port (default: 8333)
-- `HOST_ADDR`: Electrs listening address (use with caution)
-- `HOST_PORT`: Electrs exposed port (default: 50001)
-- `DB_DIR`: Database directory inside container
-- `DAEMON_DIR`: Bitcoin data directory inside container
+Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.**
 
-### Electrs Configuration (config.toml)
-
-- `auth`: Authentication credentials (format: "user:password")
-- `cookie_file`: Bitcoind cookie file path
-- `daemon_rpc_addr`: Bitcoind RPC address
-- `daemon_p2p_addr`: Bitcoind P2P address
-- `db_dir`: Index storage location (requires ~70GB)
-- `network`: Network type ("bitcoin" for mainnet)
-- `electrum_rpc_addr`: Listening address for Electrum RPC
-- `log_filters`: Logging level (INFO, WARN, DEBUG, TRACE)
+| Variable | Description | Required |
+| ---------- | ------------- | ---------- |
+| `DOCKER_USER` | Docker Hub or GHCR username | Yes |
+| `TAG` | Electrs version tag (e.g., v0.11.0) | Yes |
+| `BANNER` | Server banner string | No |
+| `BITCOIN_DIR` | Host path to Bitcoin data | Yes |
+| `ELECTRS_DIR` | Host path for electrs data | Yes |
+| `BTC_ADDR` | Bitcoin node IP address | Yes |
+| `BTC_RPC_PORT` | Bitcoin RPC port (default: 8332) | No |
+| `BTC_P2P_PORT` | Bitcoin P2P port (default: 8333) | No |
+| `HOST_ADDR` | Electrs listening address | No |
+| `HOST_PORT` | Electrs exposed port (default: 50001) | No |
+| `DB_DIR` | Database directory inside container | Auto |
+| `DAEMON_DIR` | Bitcoin data directory inside container | Auto |
 
 ## Code Style Guidelines
 
 ### Dockerfile
 
-- Multi-stage builds for minimal image size
-- Use `ubuntu:noble` as base image
-- Keep dependencies minimal (`librocksdb-dev`, build tools)
-- Clean apt cache after installs
+- Multi-stage builds for minimal image size (follow the 2-stage pattern in existing Dockerfile)
+- Use `debian:trixie-slim` or `ubuntu:noble` as base image
+- Keep dependencies minimal: clang, cmake, libclang-dev, librocksdb-dev, cargo
+- Clean apt cache after installs: `apt clean && rm -rf /var/lib/apt/lists/*`
 - Expose port 50001 (Electrum RPC default)
-- Use CMD for runtime arguments
+- Use `CMD` for runtime arguments, not `ENTRYPOINT`
+- Always use `--version` flag with `cargo install` for reproducibility
+- Use `--locked` flag to ensure dependency versions match Cargo.lock
 
 ### Shell Scripts
 
-- Shebang: `#!/bin/sh`
-- No complex bashisms (POSIX sh compatibility)
-- Use tabs for indentation
-- Comment purpose and prerequisites
-- Include usage instructions
+- Shebang: `#!/bin/sh` (POSIX sh compatibility, no bashisms)
+- Use tabs for indentation (2-4 spaces consistent with existing files)
+- Include usage instructions and prerequisites in comments
+- Load environment variables with `. ./.env` (source command)
+- Quote variables: `"${VAR}"` not `$VAR`
+- Use `--network host` for container networking (as shown in run.sh and compose.yml)
 
-### Configuration Files
+### Configuration Files (TOML)
 
-- TOML format for electrs config
-- Inline comments for each setting
-- Example values prefixed with `#`
-- Warn users not to blindly copy examples
+- Use TOML format for electrs config
+- Inline comments for each setting explaining purpose
+- Example values should be commented out with `#`
+- Include warnings: "Do NOT blindly copy this and expect it to work for you!"
+- Reference docs or man page for advanced settings
 
-## GitHub Actions
+### Docker Compose
+
+- Use version "3" format
+- Set `restart: unless-stopped` for production deployments
+- Use environment variable substitution: `${VAR}`
+- Comment non-obvious configuration choices
+- Use `network_mode: host` for Bitcoin node connectivity
+
+## GitHub Actions Workflow
 
 - Workflow: `.github/workflows/build.yml`
-- Triggers: Push to `main` branch, manual dispatch
-- Builds and pushes to `ghcr.io`
-- Tags images as `latest`
+- Triggers: Push to `main` branch, tags starting with `v`, pull requests to `main`, manual dispatch
+- Uses Docker Buildx with GitHub Actions cache
+- Builds and pushes to `ghcr.io` (GitHub Container Registry)
+- Tags images as `latest` and version tag
+- Platform: linux/amd64 only
 
 ## File Structure
 
-```text
+```bash
 .
 ├── compose.yml           # Docker Compose configuration
-├── Dockerfile            # Multi-stage build
-├── run.sh               # Testing script
-├── config.toml          # Electrs configuration example
-├── .env.example         # Environment variables template
-├── .dockerignore        # Exclude patterns
+├── Dockerfile            # Multi-stage build (base + deploy stages)
+├── run.sh               # Testing script (POSIX sh)
+├── config.toml          # Electrs configuration example (TOML)
+├── env.example          # Environment variables template
+├── .dockerignore        # Exclude patterns (.github, .vscode, .env)
 └── .github/workflows/   # CI/CD pipelines
 ```
 
@@ -155,6 +140,8 @@ Test requirements:
 - Always test with `run.sh` before pushing images
 - Verify environment variables before building
 - Keep electrs version updated via `TAG` in `.env`
+- GitHub Copilot is enabled in VSCode settings
+- **Never commit `.env` file** - it contains sensitive credentials
 
 ## Common Issues
 
