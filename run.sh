@@ -10,6 +10,9 @@
 # Check the .env and config.toml files for configuration.
 # OBS: in this case all configuration comes from the .env file.
 #
+# Log levels: DEBUG (testing), INFO (prod), WARN, ERROR
+# Set ELECTRS_LOG_FILTERS in .env to override the default (INFO).
+#
 ###
 
 # Load environment variables
@@ -21,13 +24,12 @@ docker run --rm \
 	--env-file=.env \
 	--network host \
 	-e ELECTRS_DB_DIR=${DB_DIR} \
-	-e ELECTRS_NETWORK=bitcoin \
-	-e ELECTRS_LOG_FILTERS=DEBUG \
+	-e ELECTRS_NETWORK=${ELECTRS_NETWORK:-bitcoin} \
+	-e ELECTRS_LOG_FILTERS=${ELECTRS_LOG_FILTERS:-INFO} \
 	-e ELECTRS_SERVER_BANNER="${BANNER}" \
 	-e ELECTRS_DAEMON_RPC_ADDR=${BTC_ADDR}:${BTC_RPC_PORT} \
 	-e ELECTRS_DAEMON_P2P_ADDR=${BTC_ADDR}:${BTC_P2P_PORT} \
 	-e ELECTRS_ELECTRUM_RPC_ADDR=${HOST_ADDR}:${HOST_PORT} \
-  -v ${BITCOIN_DIR}:/root/.bitcoin:ro \
+	-v ${BITCOIN_DIR}:/root/.bitcoin:ro \
 	-v ${ELECTRS_DIR}:/data \
-	-p ${HOST_PORT}:50001 \
 	${DOCKER_USER}/electrs:${TAG}

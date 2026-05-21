@@ -70,3 +70,100 @@ docker push ${DOCKER_USER}/electrs:${TAG}
 - Running Bitcoin node accessible at the configured address
 - Valid credentials in `config.toml`
 - Sufficient disk space for electrs index (~70 GB+)
+
+## Testing with Signet
+
+Signet is Bitcoin's test network — smaller, faster, and ideal for testing electrs without mainnet's ~70 GB index.
+
+### Prerequisites
+
+1. **Run bitcoind on signet** with RPC enabled:
+   ```bash
+   bitcoind -signet -server -daemon
+   ```
+
+2. **Verify the node is synced**:
+   ```bash
+   bitcoin-cli -signet getblockchaininfo
+   ```
+   Look for `"initialblockdownload": false` and `"blocks"` matching the [signet explorer](https://mempool.space/signet).
+
+### Setup
+
+1. **Clone and configure**:
+   ```bash
+   git clone https://github.com/wsouto/electrs-docker.git
+   cd electrs-docker
+   cp env.example .env
+   ```
+
+2. **Edit `.env` for signet**:
+   ```bash
+   # Bitcoin Node
+   BTC_ADDR="127.0.0.1"          # Use with --network host (Linux)
+   BTC_RPC_PORT=38332             # Signet RPC port
+   BTC_P2P_PORT=38333             # Signet P2P port
+
+   # Electrs Network
+   ELECTRS_NETWORK="signet"       # Test network
+
+   # Log Level (DEBUG for testing, INFO for production)
+   ELECTRS_LOG_FILTERS="DEBUG"
+
+   # Data Directories
+   BITCOIN_DIR="$HOME/.bitcoin"   # Your bitcoind data directory
+   ELECTRS_DIR="./data"           # Electrs index storage
+   ```
+
+3. **Create the data directory**:
+   ```bash
+   mkdir -p ./data
+   ```
+
+### Run
+
+Using `run.sh` (recommended for testing):
+```bash
+./run.sh
+```
+
+Or with Docker Compose:
+```bash
+docker compose up
+```
+
+### Verify
+
+Once electrs starts indexing, you'll see log output like:
+```
+[2026-05-21T17:47:45.445Z INFO electrs::index] indexing 1000 blocks
+[2026-05-21T17:47:45.445Z DEBUG electrs::p2p] got 10 new headers
+```
+
+Test the Electrum RPC endpoint:
+```bash
+echo '{"id":0,"method":"server.version","params":["test","1.4"]}' | nc 127.0.0.1 50001
+```
+
+Expected response:
+```json
+{"id":0,"result":["electrs 0.11.1","1.4"]}
+```
+
+### Connection Methods
+
+| Environment | BTC_ADDR | Network Mode |
+|-------------|----------|-------------|
+| Linux native | `127.0.0.1` | `--network host` |
+| Docker Desktop | `host.docker.internal` | Default bridge |
+
+> **Note**: `host.docker.internal` only works with Docker Desktop, not native Linux Docker.
+
+### Log Levels
+
+| Level | Use Case |
+|-------|----------|
+| `DEBUG` | Testing — shows headers, p2p messages, indexing details |
+| `INFO` | Production — startup, indexing progress, general ops |
+| `WARN` | Warnings and errors only |
+| `ERROR` | Errors only (least verbose) |
