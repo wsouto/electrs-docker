@@ -122,7 +122,7 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 
 ## Important Notes
 
-- Container connects to **local Bitcoin node only** (by design)
+- Container can connect to any reachable Bitcoin node (local or remote)
 - Avoid exposing Electrum RPC publicly (use SSH tunneling)
 - Database requires significant disk space (~70GB+)
 - Always test with `run.sh` before pushing images

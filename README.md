@@ -2,8 +2,6 @@
 
 Docker containerization for [electrs](https://github.com/romanz/electrs) — a lightweight Electrum Bitcoin Server.
 
-_**Note:** This image connects to a local Bitcoin node only._
-
 ## Image Details
 
 | Registry | Image | Size | Platform |
