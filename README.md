@@ -68,8 +68,8 @@ docker push ${DOCKER_USER}/electrs:${TAG}
 ## Requirements
 
 - Running Bitcoin node accessible at the configured address
-- Valid credentials in `config.toml`
-- Sufficient disk space for electrs index (~70 GB+)
+- Valid credentials in `config.toml` (cookie auth is recommended when bitcoind and electrs run on the same host)
+- Sufficient disk space for electrs index (~70 GB+ for mainnet)
 
 ## Testing with Signet
 
