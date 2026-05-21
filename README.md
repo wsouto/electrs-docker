@@ -1,46 +1,63 @@
 # electrs-docker
 
-## A Dockerfile to containerize Electrs
+Docker containerization for [electrs](https://github.com/romanz/electrs) — a lightweight Electrum Bitcoin Server.
 
-_**Note:** This image is intended to connect to a local running Bitcoin node only._
+_**Note:** This image connects to a local Bitcoin node only._
 
-**References:**
+## Image Details
 
-- Electrs repo: <https://github.com/romanz/electrs>
+| Registry | Image | Size | Platform |
+|----------|-------|------|----------|
+| Docker Hub | `waltersouto/electrs` | ~235 MB | linux/amd64 |
+| GHCR | `ghcr.io/wsouto/electrs` | ~235 MB | linux/amd64 |
 
-**Images:**
+### Architecture
 
-- Docker Hub: `waltersouto/electrs`
-- GitHub Package: `ghcr.io/wsouto/electrs:main`
+The Dockerfile uses a **multi-stage build** with Fedora minimal images:
 
-## How to use
+- **Builder stage**: Compiles electrs from source using `cargo install` from crates.io
+- **Deploy stage**: Copies only the binary into a fresh minimal image with runtime dependencies
 
-Start by cloning this repository. In the repository directory, copy the file `env.example` to `.env` and edit it according to your environment.
+This approach keeps the final image at ~235 MB instead of the ~2.79 GB that would result from inheriting the full build environment.
 
-Note: to simplify the work in this repository, load the `.env` file:
+## How to Use
+
+### 1. Configure Environment
 
 ```bash
-. ./.env
+cp env.example .env
 ```
 
-To build the image, run the following command:
+Edit `.env` with your Bitcoin node details. **Never commit `.env` to version control.**
 
-```shell
+### 2. Build
+
+```bash
 docker build -t ${DOCKER_USER}/electrs:${TAG} .
 ```
 
-You can run the container with the `docker run` command or with `docker compose`, a `compose.yml` file is provided.
+### 3. Run
 
-See the `run.sh` command for details.
+Using Docker Compose:
 
-To push the image to the registry:
+```bash
+docker compose up
+```
 
-```shell
+Or manually with `run.sh`:
+
+```bash
+./run.sh
+```
+
+### 4. Push
+
+```bash
 docker push ${DOCKER_USER}/electrs:${TAG}
 ```
 
-After the build is done, you can use the `compose.yml` file to run the image:
+## Requirements
 
-```shell
-docker compose up
-```
+- Running Bitcoin node accessible at the configured address
+- Valid credentials in `config.toml`
+- Sufficient disk space for electrs index (~70 GB+)

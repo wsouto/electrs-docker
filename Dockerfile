@@ -1,24 +1,31 @@
 # Build Electrs from Github Repository
 
-FROM debian:trixie-slim AS base
+FROM quay.io/fedora/fedora-minimal:44 AS builder
 
 LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
-ARG VERSION="0.11.0"
+ARG VERSION="0.11.1"
 
-RUN apt update -qqy
-RUN apt install -qqy clang cmake libclang-dev librocksdb-dev cargo
-RUN apt clean && rm -rf /var/lib/apt/lists/*
+RUN microdnf install -y clang cmake clang-devel rocksdb-devel cargo && \
+    microdnf clean all && \
+    rm -rf /var/cache/yum
 
 ENV ROCKSDB_INCLUDE_DIR=/usr/include
-ENV ROCKSDB_LIB_DIR=/usr/lib
+ENV ROCKSDB_LIB_DIR=/usr/lib64
 
-RUN cargo install electrs --version ${VERSION} --locked
+RUN cargo install electrs --version ${VERSION} --locked && \
+    rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache
 
 
-FROM base AS deploy
+FROM quay.io/fedora/fedora-minimal:44 AS deploy
 
-COPY --from=base /root/.cargo/bin/electrs /bin/electrs
+RUN microdnf install -y rocksdb && \
+    microdnf clean all && \
+    rm -rf /var/cache/yum
+
+ENV ROCKSDB_LIB_DIR=/usr/lib64
+
+COPY --from=builder /root/.cargo/bin/electrs /bin/electrs
 
 EXPOSE 50001
 

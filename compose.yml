@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
     network_mode: host
-    
+
     # Note that the container will expose the Electrs RPC port (default: 50001)
 
     environment:

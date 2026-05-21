@@ -60,7 +60,7 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 | Variable | Description | Required |
 | ---------- | ------------- | ---------- |
 | `DOCKER_USER` | Docker Hub or GHCR username | Yes |
-| `TAG` | Electrs version tag (e.g., v0.11.0) | Yes |
+| `TAG` | Electrs version tag (e.g., v0.11.1) | Yes |
 | `BANNER` | Server banner string | No |
 | `BITCOIN_DIR` | Host path to Bitcoin data | Yes |
 | `ELECTRS_DIR` | Host path for electrs data | Yes |
@@ -76,14 +76,18 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 
 ### Dockerfile
 
-- Multi-stage builds for minimal image size (follow the 2-stage pattern in existing Dockerfile)
-- Use `debian:trixie-slim` or `ubuntu:noble` as base image
-- Keep dependencies minimal: clang, cmake, libclang-dev, librocksdb-dev, cargo
-- Clean apt cache after installs: `apt clean && rm -rf /var/lib/apt/lists/*`
+- Multi-stage builds for minimal image size (true separation: deploy stage must NOT inherit builder)
+- Use `quay.io/fedora/fedora-minimal:44` as base image for both builder and deploy stages
+- Keep dependencies minimal: clang, cmake, clang-devel, rocksdb-devel, cargo
+- Use `microdnf` instead of `dnf` (available in minimal images)
+- Clean package cache in same layer as install: `microdnf clean all && rm -rf /var/cache/yum`
+- Clean cargo cache after install: `rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache`
 - Expose port 50001 (Electrum RPC default)
 - Use `CMD` for runtime arguments, not `ENTRYPOINT`
 - Always use `--version` flag with `cargo install` for reproducibility
 - Use `--locked` flag to ensure dependency versions match Cargo.lock
+- RocksDB library path on Fedora: `/usr/lib64` (not `/usr/lib`)
+- Target final image size: ~235 MB
 
 ### Shell Scripts
 
@@ -93,22 +97,6 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 - Load environment variables with `. ./.env` (source command)
 - Quote variables: `"${VAR}"` not `$VAR`
 - Use `--network host` for container networking (as shown in run.sh and compose.yml)
-
-### Configuration Files (TOML)
-
-- Use TOML format for electrs config
-- Inline comments for each setting explaining purpose
-- Example values should be commented out with `#`
-- Include warnings: "Do NOT blindly copy this and expect it to work for you!"
-- Reference docs or man page for advanced settings
-
-### Docker Compose
-
-- Use version "3" format
-- Set `restart: unless-stopped` for production deployments
-- Use environment variable substitution: `${VAR}`
-- Comment non-obvious configuration choices
-- Use `network_mode: host` for Bitcoin node connectivity
 
 ## GitHub Actions Workflow
 
@@ -140,12 +128,14 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 - Always test with `run.sh` before pushing images
 - Verify environment variables before building
 - Keep electrs version updated via `TAG` in `.env`
-- GitHub Copilot is enabled in VSCode settings
 - **Never commit `.env` file** - it contains sensitive credentials
+- Base images are pulled from `quay.io` (Fedora minimal), not Docker Hub
+- Build does NOT require electrs source code in build context (installs from crates.io)
 
 ## Common Issues
 
 - Connection failures: Check `BTC_ADDR` and ports in `.env`
 - Permission errors: Verify volume mount paths and permissions
-- Build failures: Ensure electrs tag is valid and reachable
+- Build failures: Ensure electrs tag is valid and reachable on crates.io
 - Slow indexing: RocksDB performance depends on storage speed
+- Quay.io pull errors: Ensure network access to `quay.io` for base images
