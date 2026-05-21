@@ -20,6 +20,15 @@ The Dockerfile uses a **multi-stage build** with Fedora minimal images:
 
 This approach keeps the final image at ~235 MB instead of the ~2.79 GB that would result from inheriting the full build environment.
 
+### Migration Note
+
+> This project migrated from **Debian trixie-slim** to **Fedora 44 minimal** (via `quay.io`). The key changes:
+> - **Package manager**: `apt` → `microdnf`
+> - **Package naming**: `libclang-dev`/`librocksdb-dev` → `clang-devel`/`rocksdb-devel`
+> - **RocksDB lib path**: `/usr/lib` → `/usr/lib64`
+> - **Image size reduced**: ~2.79 GB → ~235 MB (12x smaller)
+> - **Multi-stage build fixed**: deploy stage no longer inherits build dependencies
+
 ## How to Use
 
 ### 1. Configure Environment
