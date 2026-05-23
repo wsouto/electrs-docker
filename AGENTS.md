@@ -61,7 +61,9 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 | ---------- | ------------- | ---------- |
 | `DOCKER_USER` | Docker Hub or GHCR username | Yes |
 | `TAG` | Electrs version tag (e.g., v0.11.1) | Yes |
-| `BANNER` | Server banner string | No |
+| `BANNER` | Server banner string (supports ${TAG} and ${ELECTRS_NETWORK} template vars) | No |
+| `ELECTRS_NETWORK` | Bitcoin network (bitcoin=mainnet, signet) | No (default: bitcoin) |
+| `ELECTRS_LOG_FILTERS` | Log level (DEBUG, INFO, WARN, ERROR) | No (default: INFO) |
 | `BITCOIN_DIR` | Host path to Bitcoin data | Yes |
 | `ELECTRS_DIR` | Host path for electrs data | Yes |
 | `BTC_ADDR` | Bitcoin node IP address | Yes |
@@ -70,15 +72,16 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 | `HOST_ADDR` | Electrs listening address | No |
 | `HOST_PORT` | Electrs exposed port (default: 50001) | No |
 | `DB_DIR` | Database directory inside container | Auto |
-| `DAEMON_DIR` | Bitcoin data directory inside container | Auto |
 
 ## Code Style Guidelines
 
 ### Dockerfile
 
 - Multi-stage builds for minimal image size (true separation: deploy stage must NOT inherit builder)
+- Add `LABEL maintainer="Your Name <email>"` at the top of the builder stage
 - Use `quay.io/fedora/fedora-minimal:44` as base image for both builder and deploy stages
 - Keep dependencies minimal: clang, cmake, clang-devel, rocksdb-devel, cargo
+- Install `rocksdb` runtime library in deploy stage via `microdnf`
 - Use `microdnf` instead of `dnf` (available in minimal images)
 - Clean package cache in same layer as install: `microdnf clean all && rm -rf /var/cache/yum`
 - Clean cargo cache after install: `rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache`
@@ -92,7 +95,7 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 ### Shell Scripts
 
 - Shebang: `#!/bin/sh` (POSIX sh compatibility, no bashisms)
-- Use tabs for indentation (2-4 spaces consistent with existing files)
+- Use 2-space indentation (consistent with run.sh)
 - Include usage instructions and prerequisites in comments
 - Load environment variables with `. ./.env` (source command)
 - Quote variables: `"${VAR}"` not `$VAR`
@@ -103,7 +106,7 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 - Workflow: `.github/workflows/build.yml`
 - Triggers: Push to `main` branch, tags starting with `v`, pull requests to `main`, manual dispatch
 - Uses Docker Buildx with GitHub Actions cache
-- Builds and pushes to `ghcr.io` (GitHub Container Registry)
+- Builds and pushes to `ghcr.io` (GitHub Container Registry) and Docker Hub (`waltersouto/electrs`)
 - Tags images as `latest` and version tag
 - Platform: linux/amd64 only
 
@@ -112,11 +115,13 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 ```bash
 .
 ├── compose.yml           # Docker Compose configuration
-├── Dockerfile            # Multi-stage build (base + deploy stages)
-├── run.sh               # Testing script (POSIX sh)
 ├── config.toml          # Electrs configuration example (TOML)
+├── Dockerfile            # Multi-stage build (base + deploy stages)
 ├── env.example          # Environment variables template
 ├── .dockerignore        # Exclude patterns (.github, .vscode, .env)
+├── .gitignore           # Git ignore patterns
+├── README.md            # Project documentation
+├── run.sh               # Testing script (POSIX sh)
 └── .github/workflows/   # CI/CD pipelines
 ```
 
