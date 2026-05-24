@@ -71,7 +71,7 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 | `BTC_P2P_PORT` | Bitcoin P2P port (default: 8333) | No |
 | `HOST_ADDR` | Electrs listening address | No |
 | `HOST_PORT` | Electrs exposed port (default: 50001) | No |
-| `DB_DIR` | Database directory inside container | Auto |
+| `DB_DIR` | Database directory inside container | `/data/db` |
 
 ## Code Style Guidelines
 
@@ -114,12 +114,14 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 
 ```bash
 .
+├── AGENTS.md             # Agent guidelines
 ├── compose.yml           # Docker Compose configuration
 ├── config.toml          # Electrs configuration example (TOML)
 ├── Dockerfile            # Multi-stage build (base + deploy stages)
 ├── env.example          # Environment variables template
 ├── .dockerignore        # Exclude patterns (.github, .vscode, .env)
 ├── .gitignore           # Git ignore patterns
+├── LICENSE               # Project license
 ├── README.md            # Project documentation
 ├── run.sh               # Testing script (POSIX sh)
 └── .github/workflows/   # CI/CD pipelines

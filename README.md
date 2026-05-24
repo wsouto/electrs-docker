@@ -29,13 +29,19 @@ This approach keeps the final image at ~235 MB instead of the ~2.79 GB that woul
 
 ## How to Use
 
-### 1. Configure Environment
+### 1. Configure Environment and Server
 
 ```bash
 cp env.example .env
 ```
 
 Edit `.env` with your Bitcoin node details. **Never commit `.env` to version control.**
+
+Also, create the electrs data directory and copy the configuration file:
+```bash
+mkdir -p ./data
+cp config.toml ./data/
+```
 
 ### 2. Build
 
@@ -113,9 +119,10 @@ Signet is Bitcoin's test network — smaller, faster, and ideal for testing elec
    ELECTRS_DIR="./data"           # Electrs index storage
    ```
 
-3. **Create the data directory**:
+3. **Create the data directory and copy config**:
    ```bash
    mkdir -p ./data
+   cp config.toml ./data/
    ```
 
 ### Run

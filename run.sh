@@ -23,13 +23,13 @@ docker run --rm \
   --name electrs \
   --env-file=.env \
   --network host \
-  -e ELECTRS_DB_DIR=${DB_DIR} \
-  -e ELECTRS_NETWORK=${ELECTRS_NETWORK:-bitcoin} \
-  -e ELECTRS_LOG_FILTERS=${ELECTRS_LOG_FILTERS:-INFO} \
+  -e ELECTRS_DB_DIR="${DB_DIR}" \
+  -e ELECTRS_NETWORK="${ELECTRS_NETWORK:-bitcoin}" \
+  -e ELECTRS_LOG_FILTERS="${ELECTRS_LOG_FILTERS:-INFO}" \
   -e ELECTRS_SERVER_BANNER="${BANNER}" \
-  -e ELECTRS_DAEMON_RPC_ADDR=${BTC_ADDR}:${BTC_RPC_PORT} \
-  -e ELECTRS_DAEMON_P2P_ADDR=${BTC_ADDR}:${BTC_P2P_PORT} \
-  -e ELECTRS_ELECTRUM_RPC_ADDR=${HOST_ADDR}:${HOST_PORT} \
-  -v ${BITCOIN_DIR}:/root/.bitcoin:ro \
-  -v ${ELECTRS_DIR}:/data \
-  ${DOCKER_USER}/electrs:${TAG}
+  -e ELECTRS_DAEMON_RPC_ADDR="${BTC_ADDR}:${BTC_RPC_PORT}" \
+  -e ELECTRS_DAEMON_P2P_ADDR="${BTC_ADDR}:${BTC_P2P_PORT}" \
+  -e ELECTRS_ELECTRUM_RPC_ADDR="${HOST_ADDR}:${HOST_PORT}" \
+  -v "${BITCOIN_DIR}":/root/.bitcoin:ro \
+  -v "${ELECTRS_DIR}":/data \
+  "${DOCKER_USER}/electrs:${TAG}"
