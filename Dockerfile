@@ -6,8 +6,8 @@ LABEL maintainer="Walter Souto <wsouto@gmail.com>"
 
 ARG VERSION="0.11.1"
 
-RUN microdnf install -y clang cmake clang-devel rocksdb-devel cargo && \
-    microdnf clean all && \
+RUN dnf5 install -y clang cmake clang-devel rocksdb-devel cargo && \
+    dnf5 clean all && \
     rm -rf /var/cache/yum
 
 ENV ROCKSDB_INCLUDE_DIR=/usr/include
@@ -19,8 +19,8 @@ RUN cargo install electrs --version ${VERSION} --locked && \
 
 FROM quay.io/fedora/fedora-minimal:44 AS deploy
 
-RUN microdnf install -y rocksdb && \
-    microdnf clean all && \
+RUN dnf5 install -y rocksdb && \
+    dnf5 clean all && \
     rm -rf /var/cache/yum
 
 ENV ROCKSDB_LIB_DIR=/usr/lib64

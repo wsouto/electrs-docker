@@ -81,9 +81,9 @@ Copy `env.example` to `.env` and edit. **Never commit `.env` to version control.
 - Add `LABEL maintainer="Your Name <email>"` at the top of the builder stage
 - Use `quay.io/fedora/fedora-minimal:44` as base image for both builder and deploy stages
 - Keep dependencies minimal: clang, cmake, clang-devel, rocksdb-devel, cargo
-- Install `rocksdb` runtime library in deploy stage via `microdnf`
-- Use `microdnf` instead of `dnf` (available in minimal images)
-- Clean package cache in same layer as install: `microdnf clean all && rm -rf /var/cache/yum`
+- Install `rocksdb` runtime library in deploy stage via `dnf5`
+- Use `dnf5` instead of `microdnf` (microdnf is obsolete since Fedora 38, now a symlink to dnf5)
+- Clean package cache in same layer as install: `dnf5 clean all && rm -rf /var/cache/yum`
 - Clean cargo cache after install: `rm -rf ~/.cargo/registry ~/.cargo/git ~/.cargo/.package-cache`
 - Expose port 50001 (Electrum RPC default)
 - Use `CMD` for runtime arguments, not `ENTRYPOINT`
